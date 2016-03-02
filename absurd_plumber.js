@@ -4,6 +4,7 @@ var cursors;
 var jumpButton;
 var map;
 var layer;
+var blocks = 32;
 
 var create = function() {
   //game is global from boot_game.js
@@ -16,16 +17,24 @@ var create = function() {
   //set the world size to == tiled map
   layer.resizeWorld();
 
-  game.time.desiredFps = 30;
+  //resize the world so that it appears to be infinitely looping
+  var runOff = 14 * blocks;
+  game.world.setBounds(runOff, 0, game.world.width - (runOff * 2), game.world.height)
+
+  game.time.desiredFps = 60;
 
   game.physics.arcade.gravity.y = 550;
 
-  player = game.add.sprite(64, 32, 'phaserDude');
+  var startingY = 12 * blocks; // start 12 squares down from the top
+  player = game.add.sprite(runOff + (2 * blocks), startingY, 'phaserDude');
   game.physics.enable(player, Phaser.Physics.ARCADE);
   game.camera.follow(player);
 
+  //we only really want camera bounds on the y axis.
+  var cameraBounds = new Phaser.Rectangle(0 - runOff * 2, 0, game.world.width + (runOff * 4), game.world.height);
+  game.camera.bounds = cameraBounds;
+
   player.body.bounce.y = 0.2;
-  player.body.collideWorldBounds = false;
   player.body.setSize(20, 32, 5, 16);
 
   map.setCollisionBetween(0, 10000, true, layer);

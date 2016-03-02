@@ -1,6 +1,6 @@
 (function() {
 
-var game = new Phaser.Game(800, 600);
+var game = new Phaser.Game(800, 450);
 
 var addStates = function() {
   game.state.add('Boot', boot);
