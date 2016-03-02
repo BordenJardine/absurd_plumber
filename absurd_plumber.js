@@ -1,56 +1,56 @@
 (function() {
 var player;
-var jumpTimer = 0;
 var cursors;
 var jumpButton;
+var map;
+var layer;
 
 var create = function() {
-    //game is global from boot_game.js
-    game.physics.startSystem(Phaser.Physics.ARCADE);
+  //game is global from boot_game.js
+  game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    game.time.desiredFps = 30;
+  //set up the map from Tiled
+  map = game.add.tilemap('tiles');
+  map.addTilesetImage('block');
+  layer = map.createLayer('blocks');
+  //set the world size to == tiled map
+  layer.resizeWorld();
 
-    game.physics.arcade.gravity.y = 250;
+  game.time.desiredFps = 30;
 
-    player = game.add.sprite(32, 32, 'phaserDude');
-    game.physics.enable(player, Phaser.Physics.ARCADE);
+  game.physics.arcade.gravity.y = 550;
 
-    player.body.bounce.y = 0.2;
-    player.body.collideWorldBounds = true;
-    player.body.setSize(20, 32, 5, 16);
+  player = game.add.sprite(64, 32, 'phaserDude');
+  game.physics.enable(player, Phaser.Physics.ARCADE);
+  game.camera.follow(player);
 
-    player.animations.add('left', [0, 1, 2, 3], 10, true);
-    player.animations.add('turn', [4], 20, true);
-    player.animations.add('right', [5, 6, 7, 8], 10, true);
+  player.body.bounce.y = 0.2;
+  player.body.collideWorldBounds = false;
+  player.body.setSize(20, 32, 5, 16);
 
-    cursors = game.input.keyboard.createCursorKeys();
-    jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  map.setCollisionBetween(0, 10000, true, layer);
+
+  cursors = game.input.keyboard.createCursorKeys();
+  jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
 }
 
 var update = function() {
+  game.physics.arcade.collide(player, layer);
+  game.world.wrap(player, 0, true);
+
   player.body.velocity.x = 0;
 
-  if (cursors.up.isDown)
-  {
-      if (player.body.onFloor())
-      {
-          player.body.velocity.y = -200;
-      }
+  if (cursors.left.isDown) {
+    player.body.velocity.x = -150;
+  }
+  else if (cursors.right.isDown) {
+    player.body.velocity.x = 150;
+  }
+  if ((jumpButton.isDown || cursors.up.isDown) && player.body.onFloor()) {
+    player.body.velocity.y = -350;
   }
 
-  if (cursors.left.isDown)
-  {
-      player.body.velocity.x = -150;
-  }
-  else if (cursors.right.isDown)
-  {
-      player.body.velocity.x = 150;
-  }
-  if (jumpButton.isDown && player.body.onFloor() && game.time.now > jumpTimer)
-  {
-      player.body.velocity.y = -250;
-      jumpTimer = game.time.now + 750;
-  }
 };
 
 window.absurdPlumber = {
