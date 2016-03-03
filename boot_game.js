@@ -20,6 +20,7 @@ var preload = {
 
     this.load.image('block', 'assets/block.png');
     this.load.image('phaserDude', 'assets/phaser-dude.png');
+    this.load.image('enemy', 'assets/enemy.png');
     this.load.image('buildings', 'assets/buildings.png');
     this.load.tilemap('tiles', 'assets/tiles.json', null, Phaser.Tilemap.TILED_JSON);
   },
