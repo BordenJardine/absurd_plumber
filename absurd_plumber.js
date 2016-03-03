@@ -5,10 +5,14 @@ var jumpButton;
 var map;
 var layer;
 var blocks = 32;
+var bg;
 
 var create = function() {
   //game is global from boot_game.js
   game.physics.startSystem(Phaser.Physics.ARCADE);
+
+  var runOff = 14 * blocks;
+  bg = game.add.tileSprite(0, 0, 768, 256, 'buildings');
 
   //set up the map from Tiled
   map = game.add.tilemap('tiles');
@@ -18,10 +22,17 @@ var create = function() {
   layer.resizeWorld();
 
   //resize the world so that it appears to be infinitely looping
-  var runOff = 14 * blocks;
   game.world.setBounds(runOff, 0, game.world.width - (runOff * 2), game.world.height)
 
+  //resize the background so that it appears to be infinitely looping
+  bg.x = -runOff;
+  bg.y = 7 * blocks;
+  bg.width = game.world.width + (runOff * 4);
+  bg.height = 256;
+
+
   game.time.desiredFps = 60;
+  //game.stage.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
   game.physics.arcade.gravity.y = 550;
 
@@ -52,14 +63,15 @@ var update = function() {
 
   if (cursors.left.isDown) {
     player.body.velocity.x = -150;
+    //bg.x -= 1;
   }
   else if (cursors.right.isDown) {
     player.body.velocity.x = 150;
+    //bg.x += 1;
   }
   if ((jumpButton.isDown || cursors.up.isDown) && player.body.onFloor()) {
     player.body.velocity.y = -350;
   }
-
 };
 
 window.absurdPlumber = {
