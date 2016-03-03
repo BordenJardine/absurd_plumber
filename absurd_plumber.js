@@ -6,6 +6,7 @@ var map;
 var layer;
 var blocks = 32;
 var bg;
+var playerSpeed = 4;
 
 var create = function() {
   //game is global from boot_game.js
@@ -18,6 +19,7 @@ var create = function() {
   map = game.add.tilemap('tiles');
   map.addTilesetImage('block');
   layer = map.createLayer('blocks');
+
   //set the world size to == tiled map
   layer.resizeWorld();
 
@@ -25,9 +27,9 @@ var create = function() {
   game.world.setBounds(runOff, 0, game.world.width - (runOff * 2), game.world.height)
 
   //resize the background so that it appears to be infinitely looping
-  bg.x = -runOff;
+  bg.x = -runOff * 40; //40 is a filthy hack to make parralax work
   bg.y = 7 * blocks;
-  bg.width = game.world.width + (runOff * 4);
+  bg.width = game.world.width + (runOff * 40);
   bg.height = 256;
 
 
@@ -62,16 +64,18 @@ var update = function() {
   player.body.velocity.x = 0;
 
   if (cursors.left.isDown) {
-    player.body.velocity.x = -150;
-    //bg.x -= 1;
+    player.body.x -= playerSpeed;
+    bg.x -= playerSpeed/2; //paralax
   }
   else if (cursors.right.isDown) {
-    player.body.velocity.x = 150;
-    //bg.x += 1;
+    player.body.x += playerSpeed;
+    bg.x += playerSpeed/2;
   }
   if ((jumpButton.isDown || cursors.up.isDown) && player.body.onFloor()) {
     player.body.velocity.y = -350;
   }
+
+  bg.y = game.camera.y * 0.1 + 220;
 };
 
 window.absurdPlumber = {
